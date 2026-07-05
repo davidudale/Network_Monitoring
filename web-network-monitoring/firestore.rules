@@ -1,0 +1,190 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isDeviceOwner() {
+      return isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    function isValidDeviceOwner() {
+      return isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+    }
+
+    function hasOnlyDeviceFields() {
+      return request.resource.data.keys().hasOnly([
+        'name',
+        'ipAddress',
+        'type',
+        'location',
+        'description',
+        'status',
+        'ownerId',
+        'responseTime',
+        'lastChecked',
+        'createdAt',
+        'updatedAt'
+      ]);
+    }
+
+    function hasRequiredDeviceFields() {
+      return request.resource.data.keys().hasAll([
+        'name',
+        'ipAddress',
+        'type',
+        'location',
+        'status',
+        'ownerId',
+        'createdAt'
+      ]);
+    }
+
+    function hasValidDeviceValues() {
+      return request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.ipAddress is string
+        && request.resource.data.ipAddress.size() > 0
+        && request.resource.data.ipAddress.size() <= 45
+        && request.resource.data.type is string
+        && request.resource.data.type.size() > 0
+        && request.resource.data.type.size() <= 40
+        && request.resource.data.location is string
+        && request.resource.data.location.size() > 0
+        && request.resource.data.location.size() <= 80
+        && (
+          !request.resource.data.keys().hasAny(['description'])
+          || (
+            request.resource.data.description is string
+            && request.resource.data.description.size() <= 240
+          )
+        )
+        && request.resource.data.status in ['online', 'warning', 'offline'];
+    }
+
+    function hasValidOptionalDeviceValues() {
+      return (
+        !request.resource.data.keys().hasAny(['responseTime'])
+        || (
+          request.resource.data.responseTime is number
+          && request.resource.data.responseTime >= 0
+        )
+        || request.resource.data.responseTime == null
+      )
+      && (
+        !request.resource.data.keys().hasAny(['lastChecked'])
+        || request.resource.data.lastChecked is timestamp
+      );
+    }
+
+    function isValidDeviceCreate() {
+      return isValidDeviceOwner()
+        && hasOnlyDeviceFields()
+        && hasRequiredDeviceFields()
+        && hasValidDeviceValues()
+        && hasValidOptionalDeviceValues()
+        && request.resource.data.createdAt is timestamp
+        && !request.resource.data.keys().hasAny(['updatedAt']);
+    }
+
+    function isValidDeviceUpdate() {
+      return isDeviceOwner()
+        && isValidDeviceOwner()
+        && hasOnlyDeviceFields()
+        && hasRequiredDeviceFields()
+        && hasValidDeviceValues()
+        && hasValidOptionalDeviceValues()
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (
+          !request.resource.data.keys().hasAny(['updatedAt'])
+          || request.resource.data.updatedAt is timestamp
+        );
+    }
+
+    function isOwnUserProfile(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function hasOnlyUserFields() {
+      return request.resource.data.keys().hasOnly([
+        'email',
+        'displayName',
+        'role',
+        'createdAt',
+        'updatedAt'
+      ]);
+    }
+
+    function hasValidUserValues() {
+      return request.resource.data.email is string
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() <= 80
+        && request.resource.data.role == 'administrator';
+    }
+
+    function isValidUserCreate(userId) {
+      return isOwnUserProfile(userId)
+        && hasOnlyUserFields()
+        && hasValidUserValues()
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    function isValidUserUpdate(userId) {
+      return isOwnUserProfile(userId)
+        && hasOnlyUserFields()
+        && hasValidUserValues()
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    match /users/{userId} {
+      allow read: if isOwnUserProfile(userId);
+      allow create: if isValidUserCreate(userId);
+      allow update: if isValidUserUpdate(userId);
+      allow delete: if false;
+    }
+
+    match /devices/{deviceId} {
+      allow read: if isDeviceOwner();
+      allow create: if isValidDeviceCreate();
+      allow update: if isValidDeviceUpdate();
+      allow delete: if isDeviceOwner();
+    }
+
+    match /monitoringLogs/{logId} {
+      allow read: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /alerts/{alertId} {
+      allow read: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create, delete: if false;
+      allow update: if isSignedIn()
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.alertId == resource.data.alertId
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.deviceId == resource.data.deviceId
+        && request.resource.data.deviceName == resource.data.deviceName
+        && request.resource.data.message == resource.data.message
+        && request.resource.data.severity == resource.data.severity
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status',
+          'readAt'
+        ])
+        && resource.data.status == 'unread'
+        && request.resource.data.status == 'read'
+        && request.resource.data.readAt is timestamp;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

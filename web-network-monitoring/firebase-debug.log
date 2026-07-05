@@ -1,0 +1,31 @@
+[debug] [2026-07-04T00:12:36.678Z] ----------------------------------------------------------------------
+[debug] [2026-07-04T00:12:36.681Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\David Udale Anyegwu\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --project network-monitoring-7b445
+[debug] [2026-07-04T00:12:36.681Z] CLI Version:   15.11.0
+[debug] [2026-07-04T00:12:36.681Z] Platform:      win32
+[debug] [2026-07-04T00:12:36.681Z] Node Version:  v24.11.1
+[debug] [2026-07-04T00:12:36.682Z] Time:          Sat Jul 04 2026 01:12:36 GMT+0100 (West Africa Standard Time)
+[debug] [2026-07-04T00:12:36.682Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-04T00:12:39.734Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-04T00:12:39.735Z] > authorizing via signed-in user (inspectpromax@gmail.com)
+[debug] [2026-07-04T00:12:39.735Z] [iam] checking project network-monitoring-7b445 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-07-04T00:12:39.737Z] Checked if tokens are valid: true, expires at: 1783127288283
+[debug] [2026-07-04T00:12:39.737Z] Checked if tokens are valid: true, expires at: 1783127288283
+[debug] [2026-07-04T00:12:39.739Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/network-monitoring-7b445:testIamPermissions [none]
+[debug] [2026-07-04T00:12:39.739Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/network-monitoring-7b445:testIamPermissions  x-goog-user-project=network-monitoring-7b445
+[debug] [2026-07-04T00:12:39.739Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/network-monitoring-7b445:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-07-04T00:12:41.389Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/network-monitoring-7b445:testIamPermissions 403
+[debug] [2026-07-04T00:12:41.390Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/network-monitoring-7b445:testIamPermissions {"error":{"code":403,"message":"Caller does not have required permission to use project network-monitoring-7b445. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=network-monitoring-7b445 and then retry. Propagation of the new permission may take a few minutes.","status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"USER_PROJECT_DENIED","domain":"googleapis.com","metadata":{"service":"cloudresourcemanager.googleapis.com","consoleUrl":"https://console.developers.google.com/iam-admin/iam?project=network-monitoring-7b445","containerInfo":"network-monitoring-7b445","consumer":"projects/network-monitoring-7b445"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Caller does not have required permission to use project network-monitoring-7b445. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=network-monitoring-7b445 and then retry. Propagation of the new permission may take a few minutes."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developer console IAM admin","url":"https://console.developers.google.com/iam-admin/iam?project=network-monitoring-7b445"}]}]}}
+[debug] [2026-07-04T00:12:41.392Z] [iam] error while checking permissions, command may fail: Request to https://cloudresourcemanager.googleapis.com/v1/projects/network-monitoring-7b445:testIamPermissions had HTTP Error: 403, Caller does not have required permission to use project network-monitoring-7b445. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=network-monitoring-7b445 and then retry. Propagation of the new permission may take a few minutes.
+[debug] [2026-07-04T00:12:41.394Z] Checked if tokens are valid: true, expires at: 1783127288283
+[debug] [2026-07-04T00:12:41.394Z] Checked if tokens are valid: true, expires at: 1783127288283
+[debug] [2026-07-04T00:12:41.395Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/network-monitoring-7b445 [none]
+[debug] [2026-07-04T00:12:42.583Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/network-monitoring-7b445 403
+[debug] [2026-07-04T00:12:42.583Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/network-monitoring-7b445 {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-07-04T00:12:42.583Z] Request to https://firebase.googleapis.com/v1beta1/projects/network-monitoring-7b445 had HTTP Error: 403, The caller does not have permission
+[debug] [2026-07-04T00:12:43.233Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/network-monitoring-7b445 had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\David Udale Anyegwu\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\David Udale Anyegwu\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:333:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[error] 
+[error] Error: Failed to get Firebase project network-monitoring-7b445. Please make sure the project exists and your account has permission to access it.
